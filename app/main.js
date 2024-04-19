@@ -22,9 +22,9 @@ function routeRequest(path) {
 
   if (path.startsWith("/echo/")) {
     const str = path.slice(6); // starting index after `/echo/`
-    return `HTTP/1.1 200 OK ${CRLF}
-  Content-Type: text/plain${CRLF}
-  Content-Length: ${str.length}${CRLF}${CRLF}
+    return `HTTP/1.1 200 OK \r\n
+  Content-Type: text/plain\r\n
+  Content-Length: ${str.length}${CRLF}
   ${str}
   `;
   }

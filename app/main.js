@@ -36,8 +36,11 @@ const server = net.createServer((socket) => {
   socket.on("data", (data) => {
     const parsedData = parseData(data);
     socket.write(routeRequest(parsedData.path));
-    socket.end();
   });
+  socket.on("close", ()=> {
+    socket.end();
+    socket.close();
+  })
 });
 //
 server.listen(4221, "localhost");

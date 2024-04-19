@@ -33,10 +33,7 @@ const server = net.createServer((socket) => {
     const parsedData = parseData(data);
     socket.write(routeRequest(paredData.path));
   });
-  socket.on("close", () => {
-    socket.end();
-    server.close();
-  });
+  
 });
 //
 server.listen(4221, "localhost");

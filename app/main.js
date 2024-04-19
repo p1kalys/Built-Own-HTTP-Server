@@ -21,7 +21,7 @@ function routeRequest(path) {
   }
 
   if (path.startsWith("/echo/")) {
-    const str = path.substring(6); // starting index after `/echo/`
+    const str = path.slice(6); // starting index after `/echo/`
     return `HTTP/1.1 200 OK\r
   Content-Type: text/plain\r
   Content-Length: ${str.length}\r

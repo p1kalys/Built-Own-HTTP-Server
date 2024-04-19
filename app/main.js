@@ -11,12 +11,27 @@ function parseData(dataBuf) {
     return {
         path, method, version
     };
-}
+};
+
+function routeRequest(path) {
+    if (path == '/') {
+        return `HTTP/1.1 200 OK ${CRLF}`;
+    }
+    if (path.startsWith('/echo/')) {
+        const s = path.substring(6); // string after `/echo/`
+        return `HTTP/1.1 200 OK\r 
+        Content-Type: text/plain\r
+        Content-Length: ${s.length}\r
+        \r
+        ${s}\r`
+    };
+    return `HTTP/1.1 404 Not Found ${CRLF}`;
+};
 
 const server = net.createServer((socket) => {
   socket.on("data", (data) => {
     const parsedData = parseData(data);
-    socket.write(parsedData.path === '/' ? `HTTP/1.1 200 OK ${CRLF}` : `HTTP/1.1 404 Not Found ${CRLF}`);
+    socket.write(routeRequest(paredData.path));
   });
   socket.on("close", () => {
     socket.end();

@@ -16,9 +16,7 @@ const server = net.createServer((socket) => {
   });
 });
 
-/**
- * @param path {String}
- */
+
 function routeRequest(path) {
   if (path === '/') {
     return `HTTP/1.1 200 OK${CRLF}`;
@@ -37,13 +35,6 @@ ${str}\r
   return `HTTP/1.1 404 Not Found${CRLF}`;
 }
 
-/**
- * @param dataBuf {Buffer}
- */
-
-    
-        
-    
   
 function parseData(dataBuf) {
   const data = dataBuf.toString();

@@ -1,7 +1,12 @@
 const net = require("net");
 
+const fs = require("fs");
+const path = require('path');
+
 const CRLF = "\r\n\r\n";
 const NOT_FOUND = `HTTP/1.1 404 Not Found${CRLF}`;
+
+const DIR = process.argv.length === 4 && process.argv[2] === '--directory' ? process.argv[3] : null;
 
 const server = net.createServer((socket) => {
   socket.on("close", () => {
@@ -13,16 +18,15 @@ const server = net.createServer((socket) => {
   socket.on("data", (data) => {
     queueMicrotask(() => {
       const parsedData = parseData(data);
-      console.log("[Socket] data received", parsedData);
       socket.write(routeRequest(parsedData));
       socket.end();
     });
   });
 });
 
-function plainTextResponse(data) {
+function plainTextResponse(data, type = 'text/plain') {
   return `HTTP/1.1 200 OK\r
-Content-Type: text/plain\r
+Content-Type: ${type}\r
 Content-Length: ${data.length}\r
 \r
 ${data}\r
@@ -47,8 +51,26 @@ function routeRequest(req) {
     const str = path.substring(6); // starting index after `/echo/`
     return plainTextResponse(str);
   }
+  
+  if (path.indexOf('/files/') === 0) {
+    const fileName = path.substring(7); // starts after `/files/`
+    return octetStreamResponse(fileName);
+  }
 
   return NOT_FOUND;
+};
+
+function octetStreamResponse(fileName) {
+  if (!DIR) {
+    return NOT_FOUND;
+  }
+
+  try {
+    const fileContent = fs.readFileSync(path.join(DIR, fileName)).toString();
+    return plainTextResponse(fileContent, 'application/octet-stream');
+  } catch {
+    return NOT_FOUND;
+  }
 }
 
 function parseData(dataBuf) {

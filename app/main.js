@@ -11,10 +11,12 @@ const server = net.createServer((socket) => {
   });
 
   socket.on("data", (data) => {
-    const parsedData = parseData(data);
-    console.log("[Socket] data received", parsedData);
-    socket.write(routeRequest(parsedData));
-    socket.end();
+    queueMicrotask(() => {
+      const parsedData = parseData(data);
+      console.log("[Socket] data received", parsedData);
+      socket.write(routeRequest(parsedData));
+      socket.end();
+    });
   });
 });
 
